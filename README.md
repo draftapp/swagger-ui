@@ -44,6 +44,10 @@ You can rebuild swagger-ui on your own to tweak it or just so you can say you di
 2. `gulp`
 3. You should see the distribution under the dist folder. Open [`./dist/index.html`](./dist/index.html) to launch Swagger UI in a browser
 
+### Release
+
+1. `aws s3 sync dist/ s3://api-docs.draftapp.com/ --delete --cache-control="max-age=0, no-cache"`
+
 ### Development
 Use `gulp watch` to make a new build and watch for changes in files.
 
