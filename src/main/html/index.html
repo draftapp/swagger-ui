@@ -35,7 +35,7 @@
       if (url && url.length > 1) {
         url = decodeURIComponent(url[1]);
       } else {
-        url = "http://petstore.swagger.io/v2/swagger.json";
+        url = "http://localhost/~lyubosla/temp/swagger-new.yaml";
       }
 
       // Pre load translate...
@@ -71,18 +71,19 @@
         onFailure: function(data) {
           log("Unable to Load SwaggerUI");
         },
-        docExpansion: "none",
+        docExpansion: "list",
         jsonEditor: false,
         apisSorter: "alpha",
         defaultModelRendering: 'schema',
-        showRequestHeaders: false
+        showRequestHeaders: true,
+        useJQuery: true
       });
 
       function addApiKeyAuthorization(){
         var key = encodeURIComponent($('#input_apiKey')[0].value);
         if(key && key.trim() != "") {
-            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("api_key", key, "query");
-            window.swaggerUi.api.clientAuthorizations.add("api_key", apiKeyAuth);
+            var apiKeyAuth = new SwaggerClient.ApiKeyAuthorization("User-Token", key, "header");
+            window.swaggerUi.api.clientAuthorizations.add("UserToken", apiKeyAuth);
             log("added key " + key);
         }
       }
@@ -102,6 +103,21 @@
           console.log.apply(console, arguments);
         }
       }
+
+      $('#get-user-token-form').submit(function(event) {
+        event.preventDefault();
+        window.swaggerUi.api.User.post_me_login({
+          email: $('#get-user-token-form > input[name="email"]').val(),
+          password: $('#get-user-token-form > input[name="password"]').val()
+        },
+        function(result) {
+          $('#input_apiKey').val(result.obj.token);
+          addApiKeyAuthorization();
+        },
+        function(error) {
+          alert('Error: ' + error.status + ' ' + error.statusText);
+        });
+      });
   });
   </script>
 </head>
@@ -109,16 +125,22 @@
 <body class="swagger-section">
 <div id='header'>
   <div class="swagger-ui-wrap">
-    <a id="logo" href="http://swagger.io">swagger</a>
+    <a id="logo" href="http://swagger.io"></a>
     <form id='api_selector'>
       <div class='input'><input placeholder="http://example.com/api" id="input_baseUrl" name="baseUrl" type="text"/></div>
-      <div class='input'><input placeholder="api_key" id="input_apiKey" name="apiKey" type="text"/></div>
-      <div class='input'><a id="explore" href="#" data-sw-translate>Explore</a></div>
+      <div class='input'><input placeholder="User-Token" id="input_apiKey" name="apiKey" type="text"/></div>
     </form>
   </div>
 </div>
 
 <div id="message-bar" class="swagger-ui-wrap" data-sw-translate>&nbsp;</div>
+<div class="swagger-ui-wrap" style="margin-bottom:20px">
+  <form id="get-user-token-form">
+    <input placeholder="email" name="email" type="text">
+    <input placeholder="password" name="password" type="password">
+    <input type="submit" value="Get User-Token">
+  </form>
+</div>
 <div id="swagger-ui-container" class="swagger-ui-wrap"></div>
 </body>
 </html>
