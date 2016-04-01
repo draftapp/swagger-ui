@@ -46,7 +46,7 @@ You can rebuild swagger-ui on your own to tweak it or just so you can say you di
 
 ### Release
 
-1. `aws s3 sync dist/ s3://api-docs.draftapp.com/ --delete --cache-control="max-age=0, no-cache"`
+1. `aws s3 sync dist/ s3://api-docs.draftapp.com/ --region="us-east-1" --delete --cache-control="max-age=0, no-cache"`
 
 ### Development
 Use `gulp watch` to make a new build and watch for changes in files.
